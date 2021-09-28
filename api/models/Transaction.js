@@ -39,7 +39,7 @@ function post(req, res) {
         .then(results => {
             let accounts = results.rows;
             let originUpdate;
-            if (originAccount) {
+            if (!!originAccount) {
                 originBalance = accounts.filter(acc => acc.id === originAccount)[0].balance;
                 if (originBalance < value) throw new Error('Saldo insuficiente!');
 

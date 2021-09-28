@@ -29,34 +29,39 @@ function get(req, res) {
 };
 
 function post(req, res) {
-    let destinyAccount = req.params.destinyAccount || req.body.destinyAccount;
-    if (!destinyAccount) res.status(400).send({ error: 'Conta de destino é obrigatório!' });
+    let destinyAccountId = req.params.destinyAccountId || req.body.destinyAccountId;
+    if (!destinyAccountId) res.status(400).send({ error: 'Conta de destino é obrigatório!' });
 
-    let originAccount = req.body.originAccount || null;
+    let originAccountId = req.body.originAccountId || null;
     let value = req.body.value;
 
-    DatabaseService.run(`SELECT ID, BALANCE FROM ACCOUNT WHERE ID IN (${destinyAccount},${originAccount})`)
+    DatabaseService.run(`SELECT ID, BALANCE FROM ACCOUNT WHERE ID IN (${destinyAccountId},${originAccountId})`)
         .then(results => {
             let accounts = results.rows;
             let originUpdate;
-            if (!!originAccount) {
-                originBalance = accounts.filter(acc => acc.id === originAccount)[0].balance;
-                if (originBalance < value) throw new Error('Saldo insuficiente!');
+            if (!!originAccountId) {
+                originAccount = accounts.filter(acc => acc.id === originAccountId);
+                if (!originAccount.length) throw new Error('Conta de origem inexistente!');
 
+                let originBalance = originAccount[0].balance;
+                if (originBalance < value) throw new Error('Saldo insuficiente!');
+                
                 originUpdate = `
-                    UPDATE ACCOUNT
-                    SET BALANCE = ${originBalance - req.body.value}
-                    WHERE ID = ${req.body.originAccount};
+                UPDATE ACCOUNT
+                SET BALANCE = ${originBalance - req.body.value}
+                WHERE ID = ${originAccountId};
                 `;
             }
             
-            let [{ balance: destinyBalance }] = accounts.filter(acc => acc.id === destinyAccount);
+            let destinyAccount = accounts.filter(acc => acc.id === destinyAccountId);
+            if (!destinyAccount.length) throw new Error('Conta de destino inexistente!');
+            let destinyBalance = destinyAccount[0].balance;
 
             let query = `
                 INSERT INTO TRANSACTION (ORIGINACCOUNT, DESTINYACCOUNT, VALUE)
                 VALUES (
-                    ${req.body.originAccount || null},
-                    ${req.body.destinyAccount || req.params.destinyAccount},
+                    ${originAccountId || null},
+                    ${destinyAccountId},
                     ${req.body.value}
                 );
     

@@ -8,7 +8,7 @@ Rode o comando "npm start" na pasta root do projeto.
   
 Lista de rotas:  
   
-Criar cliente:
+Criar cliente:  
 POST /customer { name: 'string' }  
   
 Buscar cliente:  
@@ -16,18 +16,18 @@ Buscar cliente:
     ou  
     GET /customer/:id  
   
-Criar conta:
-POST /account { customer: 'integer' }  
+Criar conta:  
+POST /account { customer: 'integer' }    
   
 Buscar conta:  
     GET /account?id="integer"&customer="integer"  
     ou  
     GET /account/:id  
   
-Transferencia entre duas contas:
+Transferencia entre duas contas:  
 POST /transaction { originAccount: 'integer', destinyAccount: 'integer', value: 'integer' }  
   
-Depósito em uma conta:
+Depósito em uma conta:  
 POST /transaction { destinyAccount: 'integer', value: 'integer' }  
   
 Buscar transferências:  

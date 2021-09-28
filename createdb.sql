@@ -21,7 +21,7 @@ create table transaction (
 	value bigint,
 	primary key (id),
 	constraint fk_account
-		foreign key (originAccoount)
+		foreign key (originAccount)
 	  	references account(id),
 	constraint fk_account_2
 		foreign key (destinyAccount)

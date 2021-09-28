@@ -40,7 +40,7 @@ function post(req, res) {
             let accounts = results.rows;
             let originUpdate;
             if (!!originAccountId) {
-                originAccount = accounts.filter(acc => acc.id === originAccountId);
+                let originAccount = accounts.filter(acc => acc.id === originAccountId);
                 if (!originAccount.length) throw new Error('Conta de origem inexistente!');
 
                 let originBalance = originAccount[0].balance;

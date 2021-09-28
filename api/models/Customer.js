@@ -1,5 +1,10 @@
 const DatabaseService = require('../services/Database');
 
+/**
+ * 
+ * @param {number} id Id do cliente 
+ * @param {string} name Nome do cliente
+ */
 function get(req, res) {
     let id = req.params.id || req.query.id;
     let { name } = req.query; 
@@ -23,6 +28,10 @@ function get(req, res) {
         .catch(() => res.status(500).json({ error: 'Erro interno!' }));
 };
 
+/**
+ * 
+ * @param {string} name Nome do cliente 
+ */
 function post(req, res) {
     try {
         let { name } = req.body;

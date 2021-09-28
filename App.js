@@ -31,11 +31,11 @@ app.get('/customer/:id', Customer.get);
 app.post('/customer', Customer.post);
 app.get('/account', Account.get);
 app.get('/account/:id', Account.get);
-app.get('/customer/:customerId/account', Account.get);
+app.get('/customer/:customer/account', Account.get);
 app.post('/account', Account.post);
 app.get('/transaction', Transaction.get);
 app.post('/transaction', Transaction.post);
-app.get('account/:destinyAccountId/transaction', Transaction.get);
+app.get('/account/:destinyAccount/transaction', Transaction.get);
 
 
 app.listen(port, () => {

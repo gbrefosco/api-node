@@ -1,8 +1,13 @@
 const DatabaseService = require('../services/Database');
 
+/**
+ * 
+ * @param {number} id Id da conta 
+ * @param {number} customer Id do cliente (dono da conta) 
+ */
 function get(req, res) {
     let id = req.params.id || req.query.id;
-    let customer = req.params.customer || req.query.customer;
+    let customerId = req.params.customer || req.query.customer;
 
     let where = `
         TRUE
@@ -12,8 +17,8 @@ function get(req, res) {
         AND ID = ${id}
     `;
 
-    if (customer) where += `
-        AND CUSTOMER = ${customer}
+    if (customerId) where += `
+        AND CUSTOMER = ${customerId}
     `;
 
     let query = `
@@ -27,9 +32,14 @@ function get(req, res) {
         .catch(() => res.status(500).json({ error: 'Erro interno!' }));
 };
 
+/**
+ * 
+ * @param {number} customer Id do cliente dono da conta
+ * @param {number} balance Valor de saldo inicial
+ */
 function post(req, res) {
     try {
-        let { customerId, balance } = req.body;
+        let { customer:customerId, balance } = req.body;
 
         if (!customerId) throw new Error('Cliente é obrigatório!');
     

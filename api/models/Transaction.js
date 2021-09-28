@@ -1,9 +1,15 @@
 const DatabaseService = require('../services/Database');
 
+/**
+ * 
+ * @param {number} id Id da transação, por param da rota ou query 
+ * @param {number} destinyAccount Id da conta de destino
+ * @param {number} originAccount Id da conta de origem 
+ */
 function get(req, res) {
     let id = req.params.id || req.query.id;
-    let destinyAccountId = req.params.destinyAccountId || req.query.destinyAccountId;
-    let { originAccountId } = req.query;
+    let destinyAccountId = req.params.destinyAccount || req.query.destinyAccount;
+    let originAccountId = req.query.originAccount;
 
     let where = `
         TRUE
@@ -32,6 +38,12 @@ function get(req, res) {
         .catch(() => res.status(500).json({ error: 'Erro interno!' }));
 };
 
+/**
+ * 
+ * @param {number} destinyAccount Id da conta de destino 
+ * @param {number} originAccount Id da conta de origem (nulo para depósitos)
+ * @param {number} value Valor a ser movimentado
+ */
 function post(req, res) {
     const destinyAccountId = req.params.destinyAccount || req.body.destinyAccount;
     const { value } = req.body;

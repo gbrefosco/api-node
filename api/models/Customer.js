@@ -18,9 +18,7 @@ function get(req, res) {
 };
 
 function post(req, res) {
-    console.log('entrou');
     try {
-        console.log('entrou2');
         if (!req.body.name) throw new Error('Nome é obrigatório!');
         
         let query = `
@@ -30,7 +28,6 @@ function post(req, res) {
             )
         `;
             
-        console.log('entrou3');
         DatabaseService.run(query)
             .then(() => res.status(200).send())
             .catch(() => res.status(500).json({ error: 'Erro interno!' }));

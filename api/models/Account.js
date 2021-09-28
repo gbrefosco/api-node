@@ -1,16 +1,19 @@
 const DatabaseService = require('../services/Database');
 
 function get(req, res) {
+    let id = req.params.id || req.query.id;
+    let customer = req.params.customer || req.query.customer;
+
     let where = `
         TRUE
     `;
 
-    if (req.query.id || req.params.id) where += `
-        AND ID = ${req.query.id || req.params.id}
+    if (id) where += `
+        AND ID = ${id}
     `;
 
-    if (req.query.customer || req.params.customer) where += `
-        AND CUSTOMER = ${req.query.customer || req.params.customer}
+    if (customer) where += `
+        AND CUSTOMER = ${customer}
     `;
 
     let query = `
@@ -26,18 +29,20 @@ function get(req, res) {
 
 function post(req, res) {
     try {
-        if (!req.body.customer) throw new Error('Cliente é obrigatório!');
+        let { customerId, balance } = req.body;
+
+        if (!customerId) throw new Error('Cliente é obrigatório!');
     
         let query = `
             INSERT INTO ACCOUNT (CUSTOMER, BALANCE)
-            VALUES (${req.body.customer}, ${req.body.balance || 0})
+            VALUES (${customerId}, ${balance || 0})
         `;
     
         DatabaseService.run(query)
             .then(() => res.status(200).send())
             .catch(() => res.status(500).json({ error: 'Erro interno!' }));
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 };
 

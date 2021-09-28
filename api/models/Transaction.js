@@ -1,20 +1,24 @@
 const DatabaseService = require('../services/Database');
 
 function get(req, res) {
+    let id = req.params.id || req.query.id;
+    let destinyAccountId = req.params.destinyAccountId || req.query.destinyAccountId;
+    let { originAccountId } = req.query;
+
     let where = `
         TRUE
     `;
 
-    if (req.query.id || req.params.id) where += `
-        AND ID = ${req.query.id || req.params.id}
+    if (id) where += `
+        AND ID = ${id}
     `;
 
-    if (req.query.originAccount) where += `
-        AND ORIGINACCOUNT = ${req.query.originAccount}
+    if (originAccountId) where += `
+        AND ORIGINACCOUNT = ${originAccountId}
     `;
 
-    if (req.query.destinyAccount) where += `
-        AND DESTINYACCOUNT = ${req.query.destinyAccount}
+    if (destinyAccountId) where += `
+        AND DESTINYACCOUNT = ${destinyAccountId}
     `;
 
     let query = `
@@ -29,13 +33,14 @@ function get(req, res) {
 };
 
 function post(req, res) {
-    let destinyAccountId = req.params.destinyAccountId || req.body.destinyAccountId;
-    if (!destinyAccountId) res.status(400).send({ error: 'Conta de destino é obrigatório!' });
+    const destinyAccountId = req.params.destinyAccount || req.body.destinyAccount;
+    const { value } = req.body;
 
-    let originAccountId = req.body.originAccountId || null;
-    let value = req.body.value;
-
+    if (!destinyAccountId) res.status(400).send({ error: 'Conta de destino é obrigatório!' });    
+    if (!value) res.status(400).send({ error: 'Valor é obrigatório!' });   
     
+    const originAccountId = req.body.originAccount || null;
+
     DatabaseService.run(`SELECT ID, BALANCE FROM ACCOUNT WHERE ID IN (${destinyAccountId},${originAccountId})`)
         .then(results => {
             let accounts = results.rows;
@@ -68,19 +73,21 @@ function post(req, res) {
                     ${destinyAccountId},
                     ${req.body.value}
                 );
-    
+
                 UPDATE ACCOUNT
                 SET BALANCE = ${parseInt(req.body.value) + parseInt(destinyBalance)}
                 WHERE ID = ${destinyAccountId};
 
                 ${originAccountId ? originUpdate : ''}
             `;
-    
+
             DatabaseService.run(query)
                 .then(() => res.status(200).send())
-                .catch(() => res.status(500).json({ error: 'Erro interno!' }));            
+                .catch(() => res.status(500).send({ error: 'Erro interno!' }));            
         })
-        .catch((error) => error.message ? res.status(400).send({ error: error.message }) : res.status(500).send('Erro interno!'));
+        .catch(error => {
+            res.status(400).send(error.message);
+        });
 }
 
 module.exports = {

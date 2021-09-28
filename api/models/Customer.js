@@ -1,9 +1,15 @@
 const DatabaseService = require('../services/Database');
 
 function get(req, res) {
-    let where = ` TRUE `;
-    if (req.query.id || req.params.id) where += ` AND ID = ${req.query.id || req.params.id} `;
-    if (req.query.name) where += ` AND NAME LIKE '%${req.query.name}%' `;
+    let id = req.params.id || req.query.id;
+    let { name } = req.query; 
+
+    let where = `
+        TRUE
+    `;
+
+    if (id) where += ` AND ID = ${id} `;
+    if (name) where += ` AND NAME LIKE '%${name}%' `;
 
     let query = `
         SELECT *
@@ -19,12 +25,13 @@ function get(req, res) {
 
 function post(req, res) {
     try {
-        if (!req.body.name) throw new Error('Nome é obrigatório!');
+        let { name } = req.body;
+        if (!name) throw new Error('Nome é obrigatório!');
         
         let query = `
             INSERT INTO CUSTOMER (NAME)
             VALUES (
-                '${req.body.name}'
+                '${name}'
             )
         `;
             

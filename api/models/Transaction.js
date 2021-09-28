@@ -35,13 +35,14 @@ function post(req, res) {
     let originAccountId = req.body.originAccountId || null;
     let value = req.body.value;
 
+    
     DatabaseService.run(`SELECT ID, BALANCE FROM ACCOUNT WHERE ID IN (${destinyAccountId},${originAccountId})`)
         .then(results => {
             let accounts = results.rows;
 
             let originUpdate;
             let originAccount;
-            
+
             if (!!originAccountId) {
                 originAccount = accounts.filter(acc => acc.id === originAccountId);
                 if (!originAccount.length) throw new Error('Conta de origem inexistente!');
@@ -50,9 +51,9 @@ function post(req, res) {
                 if (originBalance < value) throw new Error('Saldo insuficiente!');
                 
                 originUpdate = `
-                UPDATE ACCOUNT
-                SET BALANCE = ${originBalance - req.body.value}
-                WHERE ID = ${originAccountId};
+                    UPDATE ACCOUNT
+                    SET BALANCE = ${originBalance - req.body.value}
+                    WHERE ID = ${originAccountId};
                 `;
             }
             
@@ -70,9 +71,9 @@ function post(req, res) {
     
                 UPDATE ACCOUNT
                 SET BALANCE = ${parseInt(req.body.value) + parseInt(destinyBalance)}
-                WHERE ID = ${req.body.destinyAccount};
+                WHERE ID = ${destinyAccountId};
 
-                ${originAccount ? originUpdate : ''}
+                ${originAccountId ? originUpdate : ''}
             `;
     
             DatabaseService.run(query)

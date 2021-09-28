@@ -38,9 +38,12 @@ function post(req, res) {
     DatabaseService.run(`SELECT ID, BALANCE FROM ACCOUNT WHERE ID IN (${destinyAccountId},${originAccountId})`)
         .then(results => {
             let accounts = results.rows;
+
             let originUpdate;
+            let originAccount;
+            
             if (!!originAccountId) {
-                let originAccount = accounts.filter(acc => acc.id === originAccountId);
+                originAccount = accounts.filter(acc => acc.id === originAccountId);
                 if (!originAccount.length) throw new Error('Conta de origem inexistente!');
 
                 let originBalance = originAccount[0].balance;

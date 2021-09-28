@@ -10,6 +10,7 @@ function get(req, res) {
     let id = req.params.id || req.query.id;
     let destinyAccountId = req.params.destinyAccount || req.query.destinyAccount;
     let originAccountId = req.query.originAccount;
+    let accountId = req.params.account;
 
     let where = `
         TRUE
@@ -25,6 +26,10 @@ function get(req, res) {
 
     if (destinyAccountId) where += `
         AND DESTINYACCOUNT = ${destinyAccountId}
+    `;
+
+    if (accountId) where += `
+        AND (ORIGINACCOUNT = ${accountId} OR DESTINYACCOUNT = ${accountId})
     `;
 
     let query = `

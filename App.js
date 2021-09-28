@@ -35,8 +35,7 @@ app.get('/customer/:customer/account', Account.get);
 app.post('/account', Account.post);
 app.get('/transaction', Transaction.get);
 app.post('/transaction', Transaction.post);
-app.get('/account/:destinyAccount/transaction', Transaction.get);
-
+app.get('/account/:account/transaction', Transaction.get);
 
 app.listen(port, () => {
     console.log(`App running on port ${port}.`)
